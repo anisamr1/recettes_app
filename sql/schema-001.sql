@@ -1,0 +1,42 @@
+CREATE DATABASE IF NOT EXISTS recettes_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE recettes_db;
+
+CREATE TABLE IF NOT EXISTS categories (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auteurs (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(120) NOT NULL,
+    specialite VARCHAR(120) NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS recettes (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(180) NOT NULL,
+    resume VARCHAR(300) NOT NULL,
+    temps_preparation INT UNSIGNED NOT NULL DEFAULT 15,
+    contenu LONGTEXT NOT NULL,
+    date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    categorie_id INT UNSIGNED NULL,
+    auteur_id INT UNSIGNED NULL,
+    CONSTRAINT fk_recettes_categorie
+        FOREIGN KEY (categorie_id) REFERENCES categories(id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_recettes_auteur
+        FOREIGN KEY (auteur_id) REFERENCES auteurs(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS utilisateurs (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(120) NOT NULL,
+    email VARCHAR(180) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    role ENUM('utilisateur', 'admin') NOT NULL DEFAULT 'utilisateur'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
